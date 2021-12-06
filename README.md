@@ -1,6 +1,22 @@
 # Controle de Vendas
 Autor: [**Getulio dos Santos Araujo**](https://github.com/santosTulio)
 ### Instalação
+* Para rodar esse código:
+  1. Clone o projeto em um diretorio local:
+    ```
+     git clone https://github.com/santosTulio/ControleVendas.git
+    ```
+  2. Acesse a raiz desse diretório, caso não exista realize uma copia do arquivo .env.example, no seguinte comando:
+    ```
+    php -r "file_exists('.env') || copy('.env.example', '.env');"
+    ```
+  Faça as alterações que achar conveniente. Obs: Caso queira usar os dados dispostos na base de dado database.sqlite, não é necessario alterar qualquer parametro relativo ao banco de dados.
+  3. Ainda na raiz instale as dependencia com o seguinte comando:
+  4. E por fim para executar o programa basta usar o seguinte comando:
+     ```
+     php artisan serve
+     ```
+  Agora por meio dos endpoint abaixo definido é possivel visualizar e fazer as alterações permitidas e viabilizada pela aplicação.
 
 ### Requisito da plataforma
 * Só pode ser acessível pelos vendedores a partir de um login e senha:
