@@ -10,8 +10,11 @@ Autor: [**Getulio dos Santos Araujo**](https://github.com/santosTulio)
     ```
     php -r "file_exists('.env') || copy('.env.example', '.env');"
     ```
-  Faça as alterações que achar conveniente. Obs: Caso queira usar os dados dispostos na base de dado database.sqlite, não é necessario alterar qualquer parametro relativo ao banco de dados.
+   Faça as alterações que achar conveniente. Obs: Caso queira usar os dados dispostos na base de dado database.sqlite, não é necessario alterar qualquer parametro relativo ao banco de dados.
   3. Ainda na raiz instale as dependencia com o seguinte comando:
+    ```
+    composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    ```
   4. E por fim para executar o programa basta usar o seguinte comando:
      ```
      php artisan serve
@@ -91,7 +94,7 @@ Autor: [**Getulio dos Santos Araujo**](https://github.com/santosTulio)
           ]
       }
     ```
-    * Para alterar os parametros [cliente_id,vendedor_id e valorTotal] basta enviar uma resquisição POST para o mesmo endpoint anterior com os novos valores validos no corpo da requisição.
+    * Para alterar os parametros [cliente_id,vendedor_id e valorTotal] basta enviar uma resquisição PATCH para o mesmo endpoint anterior com os novos valores validos no corpo da requisição.
   * Produtos:
     * Para visualizar os detalhes de um produto basta fazer uma requisição GET para o endpoint http://localhost:8000/produtos/<id>, com <id> sendo o id do produto a ser detalhado:
     ```
@@ -104,7 +107,7 @@ Autor: [**Getulio dos Santos Araujo**](https://github.com/santosTulio)
     "valor": "19.92"
     }
     ```
-    * Para alterar qualquer dos detalhes de um produtos basta enviar uma resquisição POST para o mesmo endpoint anterior com os novos valores validos no corpo da requisição.
+    * Para alterar qualquer dos detalhes de um produtos basta enviar uma resquisição PATCH para o mesmo endpoint anterior com os novos valores validos no corpo da requisição.
 
 
 * Possibilidade de gerar um relatório detalhado de pedidos, que possa ser ordenado por valor, ou data de compra. O relatório precisa ser paginado.
