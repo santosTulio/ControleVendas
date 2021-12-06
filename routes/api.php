@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthApiController;
+use App\Http\Controllers\PedidosApiController;
+use App\Http\Controllers\ProdutosApiController;
+use App\Http\Controllers\RelatorioPedidoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,7 +19,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/login', [AuthApiController::class, 'login']);
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['middleware'=>['auth:sanctum','permissaoVendedor']],function(){
+    Route::resource('pedidos',PedidosApiController::class)->only(['index','update','show']);
+    Route::resource('produtos',ProdutosApiController::class)->only(['index','update','show']);
+    Route::get('relatorio/pedidos',[RelatorioPedidoController::class, 'index']);
 });
