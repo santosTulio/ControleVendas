@@ -1,66 +1,112 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Controle de Vendas
+Autor: [**Getulio dos Santos Araujo**](https://github.com/santosTulio)
+### Instalação
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+### Requisito da plataforma
+* Só pode ser acessível pelos vendedores a partir de um login e senha:
+  * O acesso aos endpoints descritos a seguir são realizado por meio de token, e ainda assim o usuario equivalente ao token passado no cabeçalho, deve está cadastrado como vendedor na plataforma.
+  * A obtenção do token é realizada por meio de uma requisição POST no endpoint http://localhost:8000/api/login, com email e senha no corpo da requisição na seguinte estrutura:
+  ```
+    {
+        "email": "fulano@example.com.br",
+        "password": "vendedor#123"
+    }
+  ```
+  (Usando o banco de dados database.sqlite disposto junto ao projeto, pode se usar os parametros acima exemplificado)
+  * Obtendo como resposta um token, basta usa-lo no cabeçalho das demais requisições que dependem de tal autencação, no seguinte parametro:
+  ```
+  Authorization: Bearer <token_recebido>
+  ```
+  * Deve listar os pedidos e os produtos:
+    * Para listar os pedidos basta fazer uma requisição GET ao endpoint http://localhost:8000/api/pedidos/. É esperado obter como resposta um JSON com a seguinte estrutura:
+    ```
+    [
+      {
+          "numero": 1,
+          "cliente_id": "4",
+          "vendedor_id": "1",
+          "valorTotal": "467.02",
+          "produtos_pedidos": [
+              {
+                  "id": 1,
+                  "produto_id": "7",
+                  "pedido_id": "1",
+                  "quantidade": "2",
+                  "valor_unitario": "46.97"
+              },
+              ...
+          ]
+      },
+      ...
+    ]
+    ```
+    * Idem para produtos no endpoint http://localhost:8000/api/produtos. É esperado obter como resposta um JSON com a seguinte estrutura:
+    ```
+    [
+      {
+        "id": 1,
+        "codigo": "123456",
+        "nome": "Gorgeous Rubber Watch ...",
+        "cor": "Teal",
+        "descricao": "Lorem lipsum ...",
+        "valor": "78.55"
+      },
+      ...
+    ]
+    ```
+* Necessário poder ver e editar os detalhes dos pedidos e dos produtos:
+  * Pedidos:
+    * Para visualizar os detalhes de um pedido basta fazer uma requisição GET para o endpoint http://localhost:8000/pedidos/<numero>, com <numero> sendo o numero do pedido a ser detalhado:
+    ```
+    {
+          "numero": 1,
+          "cliente_id": "4",
+          "vendedor_id": "1",
+          "valorTotal": "467.02",
+          "produtos_pedidos": [
+              {
+                  "id": 1,
+                  "produto_id": "7",
+                  "pedido_id": "1",
+                  "quantidade": "2",
+                  "valor_unitario": "46.97"
+              },
+              ...
+          ]
+      }
+    ```
+    * Para alterar os parametros [cliente_id,vendedor_id e valorTotal] basta enviar uma resquisição POST para o mesmo endpoint anterior com os novos valores validos no corpo da requisição.
+  * Produtos:
+    * Para visualizar os detalhes de um produto basta fazer uma requisição GET para o endpoint http://localhost:8000/produtos/<id>, com <id> sendo o id do produto a ser detalhado:
+    ```
+    {
+    "id": 11,
+    "codigo": "353509",
+    "nome": "Ergonomic Concrete Plate",
+    "cor": "Aqua",
+    "descricao": "veritatis sint voluptate illo et eligendi molestiae voluptatibus quaerat distinctio",
+    "valor": "19.92"
+    }
+    ```
+    * Para alterar qualquer dos detalhes de um produtos basta enviar uma resquisição POST para o mesmo endpoint anterior com os novos valores validos no corpo da requisição.
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+* Possibilidade de gerar um relatório detalhado de pedidos, que possa ser ordenado por valor, ou data de compra. O relatório precisa ser paginado.
+  * Para obter tal relatorio basta realizar realizar uma requisição GET ao endpoint http://localhost:8000/relatorio/pedidos. Escolhemos por padrão ordenar o resultado da requisição pela data da compra, e possivel mudar a mesma adicionado uma query a url da requisição da seguinte forma:
+  ```
+    http://localhost:8000/api/relatorio/pedidos?orderby=<tipo_ordenação>
+  ```
+  Substituindo <tipo_ordenação> pelo tipo de ordenação: "valor" ou "data".
+  * Para a paginação, usamos os parametros:
+    * perPage : quantidade de pedidos por página. Minimo de 1 pedido por página. Definimos como padrão 5;
+    * page: pagina a ser retornada. São contabilizada a partir da página 1. Exibimos por padrão a pagina inicial;
+    Ambos aplicados na url de forma idem a ordenação, espera-se que a resposta seja algo semelhante a listagem dos pedidos e produtos.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+##
+## Dependencias
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[CMS Max](https://www.cmsmax.com/)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-- **[Romega Software](https://romegasoftware.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+* ![SQLite](https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)
+* ![PHP](https://img.shields.io/badge/php-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white) Versão: *^7.3|^8.0*
+* ![Laravel](https://img.shields.io/badge/laravel-%23FF2D20.svg?style=for-the-badge&logo=laravel&logoColor=white) Versão: *^8.65*
+* [*Módulo de linguagem Português do Brasil (pt-BR) para Laravel >= 5.6*](https://github.com/lucascudo/laravel-pt-BR-localization)
+* [*faker-provider-collection*](https://github.com/mbezhanov/faker-provider-collection)
